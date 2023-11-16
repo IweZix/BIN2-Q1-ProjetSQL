@@ -3,8 +3,8 @@ import java.sql.SQLException;
 public class Main {
 
     public static void main(String[] args) throws SQLException {
-        ApplicationProfesseur applicationCentrale = new ApplicationProfesseur();
+        ApplicationProfesseur applicationProfessseur = new ApplicationProfesseur();
 
-        applicationCentrale.start();
+        applicationProfessseur.start();
     }
 }

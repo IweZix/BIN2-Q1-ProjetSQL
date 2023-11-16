@@ -45,14 +45,13 @@ public class ApplicationProfesseur {
 
             // Prepare the SQL statement
             encoderEtudiant = connection.prepareStatement("SELECT projet2023.encoder_etudiant(?, ?, ?, ?, ?)");
-            encoderEntreprise = connection.prepareStatement("SELECT projet2023.encoder_entreprise(?, ?, ?, ?)");
+            encoderEntreprise = connection.prepareStatement("SELECT projet2023.encoder_entreprise(?, ?, ?, ?, ?)");
             encoderMotCle = connection.prepareStatement("SELECT projet2023.encoder_un_mot_cle(?)");
             voirOffreDeStageNonValidee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_non_validee");
             validerOffreDeStageNonValidee = connection.prepareStatement("SELECT FROM projet2023.valider_offre_de_stage(?)");
             voirOffreDeStageValidee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_validee");
             voirEtudiantSansStageAccepte = connection.prepareStatement("SELECT * FROM projet2023.voir_etudiant_sans_stage_accepte");
             voirOffreDeStageAttribuee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_aatribuee");
-
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -147,6 +146,9 @@ public class ApplicationProfesseur {
         String motDePasse = scanner.nextLine();
 
         try {
+            String sel = BCrypt.gensalt();
+            motDePasse = BCrypt.hashpw(motDePasse, sel);
+
             encoderEtudiant.setString(1, nom);
             encoderEtudiant.setString(2, prenom);
             encoderEtudiant.setString(3, email);
@@ -167,6 +169,8 @@ public class ApplicationProfesseur {
         System.out.println("================================ Encoder une entreprise ================================");
         System.out.print("Entrez le nom de l'entreprise: ");
         String nom = scanner.nextLine();
+        System.out.print("Entrez l'id de l'entreprise: ");
+        String id = scanner.nextLine();
         System.out.print("Entrez l'adresse de l'entreprise: ");
         String adresse = scanner.nextLine();
         System.out.print("Entrez l'email de l'entreprise: ");
@@ -175,16 +179,20 @@ public class ApplicationProfesseur {
         String motDePasse = scanner.nextLine();
 
         try {
-            encoderEntreprise.setString(1, nom);
-            encoderEntreprise.setString(2, adresse);
-            encoderEntreprise.setString(3, email);
-            encoderEntreprise.setString(4, motDePasse);
+            String sel = BCrypt.gensalt();
+            motDePasse = BCrypt.hashpw(motDePasse, sel);
+
+            encoderEntreprise.setString(1, id.toUpperCase());
+            encoderEntreprise.setString(2, nom);
+            encoderEntreprise.setString(3, adresse);
+            encoderEntreprise.setString(4, email);
+            encoderEntreprise.setString(5, motDePasse);
 
             encoderEntreprise.execute();
             System.out.println("Entreprise encodée avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            // System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
         System.out.println("====================================================================================\n");
 

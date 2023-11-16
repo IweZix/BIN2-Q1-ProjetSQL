@@ -18,6 +18,7 @@ public class ApplicationEntreprise {
 
     private PreparedStatement connecterEntreprise;
     private PreparedStatement encoderOffreDeStage;
+    private PreparedStatement voirLesMotsCle;
 
     private String idEntreprise;
 
@@ -41,6 +42,7 @@ public class ApplicationEntreprise {
 
             connecterEntreprise = connection.prepareStatement("SELECT projet2023.connecter_entreprise(?)");
             encoderOffreDeStage = connection.prepareStatement("SELECT projet2023.encoder_offre_de_stage(?, ?, ?)");
+            voirLesMotsCle = connection.prepareStatement("SELECT * FROM projet2023.voir_mots_cles");
 
         } catch (java.sql.SQLException e) {
             System.err.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
@@ -59,7 +61,7 @@ public class ApplicationEntreprise {
             System.out.print("Entrez votre choix: ");
 
             try {
-                option = scanner.nextInt();
+                option = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Erreur de saisie");
                 continue;
@@ -115,15 +117,16 @@ public class ApplicationEntreprise {
                 seConnecter();
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur lors de la connexion de l'entreprise");
         }
     }
 
-    private void menuEntreprise() {
+    private void menuEntreprise() throws SQLException {
         int choix;
         while (true) {
             System.out.println("============================ Application Entreprise ============================");
             System.out.println("1. Encoder une offre de stage");
+            System.out.println("2. Voir les mots clés");
             System.out.println("7. Fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
@@ -145,6 +148,7 @@ public class ApplicationEntreprise {
 
             switch (choix) {
                 case 1 -> encoderOffreDeStage();
+                case 2 -> voirLesMotsCles();
                 case 7 -> {
                     System.out.println("Fermeture de l'application");
                     this.close();
@@ -199,6 +203,25 @@ public class ApplicationEntreprise {
 
         System.out.println("==============================================================================================\n");
 
+    }
+
+    private void voirLesMotsCles() throws SQLException {
+        System.out.println("================================ Voir les mots clés =================================");
+        ResultSet rs = null;
+
+        try {
+            voirLesMotsCle.execute();
+            rs = voirLesMotsCle.getResultSet();
+            while (rs.next()) {
+                System.out.println(rs.getInt("id_mot_cle") + " : " +  rs.getString("mots_cles"));
+            }
+            System.out.println("Mots clés affichés avec succès");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'affichage des mots clés");
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("====================================================================================\n");
     }
 
 }

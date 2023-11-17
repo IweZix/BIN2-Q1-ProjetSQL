@@ -19,6 +19,7 @@ public class ApplicationEntreprise {
     private PreparedStatement connecterEntreprise;
     private PreparedStatement encoderOffreDeStage;
     private PreparedStatement voirLesMotsCle;
+    private PreparedStatement ajouterMotCle;
 
     private String idEntreprise;
 
@@ -43,6 +44,7 @@ public class ApplicationEntreprise {
             connecterEntreprise = connection.prepareStatement("SELECT projet2023.connecter_entreprise(?)");
             encoderOffreDeStage = connection.prepareStatement("SELECT projet2023.encoder_offre_de_stage(?, ?, ?)");
             voirLesMotsCle = connection.prepareStatement("SELECT * FROM projet2023.voir_mots_cles");
+            ajouterMotCle = connection.prepareStatement("SELECT projet2023.ajouter_mot_cle_a_offre(?, ?, ?)");
 
         } catch (java.sql.SQLException e) {
             System.err.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
@@ -127,6 +129,7 @@ public class ApplicationEntreprise {
             System.out.println("============================ Application Entreprise ============================");
             System.out.println("1. Encoder une offre de stage");
             System.out.println("2. Voir les mots clés");
+            System.out.println("3. Ajouter un mot clé à une offre de stage");
             System.out.println("7. Fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
@@ -149,6 +152,7 @@ public class ApplicationEntreprise {
             switch (choix) {
                 case 1 -> encoderOffreDeStage();
                 case 2 -> voirLesMotsCles();
+                case 3 -> ajouterMotCle();
                 case 7 -> {
                     System.out.println("Fermeture de l'application");
                     this.close();
@@ -178,7 +182,8 @@ public class ApplicationEntreprise {
         try {
             connection.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur lors de la fermeture de la connexion à la base de données");
+            // System.out.println(e.getMessage());
         }
     }
 
@@ -218,10 +223,32 @@ public class ApplicationEntreprise {
             System.out.println("Mots clés affichés avec succès");
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'affichage des mots clés");
-            System.out.println(e.getMessage());
+            // System.out.println(e.getMessage());
         }
 
         System.out.println("====================================================================================\n");
+    }
+
+    private void ajouterMotCle() {
+        System.out.println("================================ Ajouter un mot clé à une offre de stage =================================");
+        System.out.print("Entrez l'id de l'offre de stage: ");
+        String idOffre = scanner.nextLine();
+        System.out.print("Entrez le mot clé: ");
+        String motCle = scanner.nextLine();
+
+        try {
+            ajouterMotCle.setString(1,idEntreprise);
+            ajouterMotCle.setString(2,idOffre);
+            ajouterMotCle.setString(3,motCle);
+
+            ajouterMotCle.execute();
+            System.out.println("Mot clé ajouté avec succès");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout du mot clé");
+            // System.out.println(e.getMessage());
+        }
+
+        System.out.println("============================================================================================================\n");
     }
 
 }

@@ -260,7 +260,7 @@ public class ApplicationEntreprise {
         ResultSet rs = null;
 
         try {
-            voirSesOffres.setString(1,idEntreprise);
+            voirSesOffres.setString(1, idEntreprise);
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'affichage des offres de stage");
             // System.out.println(e.getMessage());

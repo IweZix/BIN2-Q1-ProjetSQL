@@ -62,7 +62,7 @@ public class ApplicationProfesseur {
     public void start() throws SQLException {
         int choix;
         while (true) {
-            System.out.println("============================ Application Centrale ============================");
+            System.out.println("============================ Application Professeur ============================");
             System.out.println("1. Encoder un étudiant");
             System.out.println("2. Encoder une entreprise");
             System.out.println("3. Encoder un mot clé");
@@ -72,7 +72,7 @@ public class ApplicationProfesseur {
             System.out.println("7. Voir les étudiants sans stage accepté");
             System.out.println("8. Voir les offres de stage attribuées");
             System.out.println("9. Fermer l'application");
-            System.out.println("==============================================================================");
+            System.out.println("=================================================================================");
             System.out.print("Entrez votre choix: ");
 
             try {

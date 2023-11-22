@@ -21,6 +21,7 @@ public class ApplicationEntreprise {
     private PreparedStatement voirLesMotsCle;
     private PreparedStatement ajouterMotCle;
     private PreparedStatement voirSesOffres;
+    private PreparedStatement voirCandidaturePourOffre;
 
     private String idEntreprise;
 
@@ -47,6 +48,7 @@ public class ApplicationEntreprise {
             voirLesMotsCle = connection.prepareStatement("SELECT * FROM projet2023.voir_mots_cles");
             ajouterMotCle = connection.prepareStatement("SELECT projet2023.ajouter_mot_cle_a_offre(?, ?, ?)");
             voirSesOffres = connection.prepareStatement("SELECT * FROM projet2023.voir_ses_offres_de_stage WHERE entreprise = ?");
+            voirCandidaturePourOffre = connection.prepareStatement("SELECT * FROM projet2023.voir_candidature_pour_offre_de_stage WHERE code = ? AND entreprise = ?");
 
         } catch (java.sql.SQLException e) {
             System.err.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
@@ -133,6 +135,7 @@ public class ApplicationEntreprise {
             System.out.println("2. Voir les mots clés");
             System.out.println("3. Ajouter un mot clé à une offre de stage");
             System.out.println("4. Voir ses offres de stage");
+            System.out.println("5. Voir les candidatures pour une offre de stage");
             System.out.println("7. Fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
@@ -157,6 +160,7 @@ public class ApplicationEntreprise {
                 case 2 -> voirLesMotsCles();
                 case 3 -> ajouterMotCle();
                 case 4 -> voirSesOffres();
+                case 5 -> voirCandidaturePourOffre();
                 case 7 -> {
                     System.out.println("Fermeture de l'application");
                     this.close();
@@ -285,6 +289,46 @@ public class ApplicationEntreprise {
         }
 
         System.out.println("============================================================================================\n");
+    }
+
+    private void voirCandidaturePourOffre() {
+        System.out.println("================================ Voir les candidatures pour une offre de stage =================================");
+        System.out.print("Entrez le code de l'offre de stage: ");
+        String codeOffre = scanner.nextLine();
+
+        int numCandidature = 1;
+        ResultSet rs = null;
+
+        try {
+            voirCandidaturePourOffre.setString(1, codeOffre);
+            voirCandidaturePourOffre.setString(2, idEntreprise);
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'affichage des candidatures pour une offre de stage");
+            // System.out.println(e.getMessage());
+        }
+
+        try {
+            voirCandidaturePourOffre.execute();
+
+            rs = voirCandidaturePourOffre.getResultSet();
+            if (!rs.isBeforeFirst()) {
+                System.out.println("Aucune candidature pour cette offre de stage");
+                return;
+            }
+
+            while (rs.next()) {
+                System.out.println("Candidature : " + numCandidature++);
+                System.out.println("↳ État : " + rs.getString("etat"));
+                System.out.println("↳ Nom : " + rs.getString("nom"));
+                System.out.println("↳ Prénom : " + rs.getString("prenom"));
+                System.out.println("↳ Email : " + rs.getString("email"));
+                System.out.println("↳ Motivation : " + rs.getString("motivation"));
+                System.out.println();
+            }
+            System.out.println("Candidatures affichées avec succès");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

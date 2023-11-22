@@ -17,6 +17,8 @@ public class ApplicationEtudiant {
 
     private Connection connection;
 
+    private PreparedStatement connecterEtudiant;
+
     private PreparedStatement voirOffreDeStageValidee;
 
     private PreparedStatement rechercheOffreDeStageParMotCle;
@@ -37,23 +39,95 @@ public class ApplicationEtudiant {
 
         // URL to connect to the database local
         String url = properties.getProperty("db.url");
+        String user = properties.getProperty("db.user");
+        String password = properties.getProperty("db.password");
 
         try {
             // Connect to the database
-            connection = DriverManager.getConnection(url, properties.getProperty("db.user"), properties.getProperty("db.password"));
+            connection = DriverManager.getConnection(url, user, password);
 
             // Prepare the SQL statement
-            voirOffreDeStageValidee = connection.prepareStatement("SELECT SELECT code, nom, adresse, description FROM projet2023.voir_offres_de_stage_validee WHERE etudiant = ?");
+            connecterEtudiant = connection.prepareStatement("SELECT projet2023.connecter_etudiant(?)");
+            voirOffreDeStageValidee = connection.prepareStatement("SELECT code, nom, adresse, description FROM projet2023.offre_stage_validee WHERE etudiant = ?");
             rechercheOffreDeStageParMotCle = connection.prepareStatement("SELECT code, nom, adresse, description, mots_cles FROM projet2023.recherche_offre_de_stage_par_mots_cle(?,?) WHERE etudiant = $1 AND mots_cles = $2");
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erreur de la connexion à la base de données : " + e.getMessage());
             System.exit(1);
         }
 
     }
 
-    public void start() throws SQLException {
+    public void start() {
+        int option = 0;
+
+        while (true) {
+            System.out.println("==================== Application Etudiant ====================");
+            System.out.println("1. Se connecter");
+            System.out.println("2. Fermer l'application");
+            System.out.println("==============================================");
+            System.out.print("Entrez votre choix: ");
+
+            try {
+                option = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Erreur de saisie");
+                continue;
+            }
+
+            if (option == 0) break;
+
+            if (option < 0 || option > 2) {
+                System.out.println("Erreur: Veuillez entrer un nombre entre 1 et 2");
+                continue;
+            }
+
+            switch (option) {
+                case 1: {
+                    seConnecter();
+                    break;
+                }
+                case 2: {
+                    System.out.println("Fermeture de l'application");
+                    this.close();
+                    System.exit(0);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void seConnecter(){
+        System.out.println("================================ Connexion Etudiant =================================");
+        System.out.print("Entrez votre email: ");
+        String email = scanner.next();
+        System.out.print("Entrez votre mot de passe: ");
+        String password = scanner.next();
+
+        try {
+            connecterEtudiant.setString(1,email);
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la connexion de l'etudiant");
+        }
+        try (ResultSet resultSet = connecterEtudiant.executeQuery()) {
+            if (resultSet.next()) {
+                if (BCrypt.checkpw(password, resultSet.getString("connecter_etudiant").split(",")[1].replace(")",""))) {
+                    idEtudiant = resultSet.getString("connecter_etudiant").split(",")[0].replace("(","");
+                    System.out.println("Connecter avec succès sous l'identifiant : " + idEtudiant + "\n");
+                    menuEtudiant();
+                } else {
+                    System.out.println("mots de passe ou e-mail invalide");
+                    seConnecter();
+                }
+            } else {
+                System.out.println("mots de passe ou e-mail invalide");
+                seConnecter();
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la connexion de l'etudiant");
+        }
+    }
+    public void menuEtudiant(){
         int choix;
         while (true) {
             System.out.println("============================ Application Etudiant ============================");
@@ -62,6 +136,7 @@ public class ApplicationEtudiant {
             System.out.println("3. Poser sa candidature");
             System.out.println("4. Voir les offres de stage pour lequel une candidature a ete posee");
             System.out.println("5. Annuler une candidature");
+            System.out.println("6. fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
 
@@ -75,24 +150,38 @@ public class ApplicationEtudiant {
 
             if (choix == 0) break;
 
-            if (choix < 0 || choix > 5) {
+            if (choix < 0 || choix > 6) {
                 System.out.println("Erreur: Veuillez entrer un nombre entre 1 et 5");
                 continue;
             }
 
             switch (choix) {
-                case 1 -> voirOffreDeStageValidee();
-                case 2 -> rechercheOffreDeStageParMotCle();
-                case 3 -> poserSaCandidature();
-                case 4 -> voirOffreDeStageAvecCandidaturePosee();
-                case 5 -> annulerUneCandidature();
-                case 6 -> {
+                case 1: {
+                    voirOffreDeStageValidee();
+                    break;
+                }
+                case 2:{
+                    rechercheOffreDeStageParMotCle();
+                    break;
+                }
+                case 3:{
+                    poserSaCandidature();
+                    break;
+                }
+                case 4: {
+                    voirOffreDeStageAvecCandidaturePosee();
+                    break;
+                }
+                case 5: {
+                    annulerUneCandidature();
+                    break;
+                }
+                case 6: {
                     System.out.println("Fermeture de l'application");
                     this.close();
                     System.exit(0);
                 }
-                default -> {
-                }
+
             }
         }
 
@@ -123,7 +212,7 @@ public class ApplicationEtudiant {
         }
     }
 
-    private void voirOffreDeStageValidee() throws SQLException {
+    private void voirOffreDeStageValidee(){
 
         try {
             System.out.println("====================================================================================\n");
@@ -138,7 +227,7 @@ public class ApplicationEtudiant {
         System.out.println("====================================================================================\n");
     }
 
-    private void rechercheOffreDeStageParMotCle() throws SQLException {
+    private void rechercheOffreDeStageParMotCle(){
 
         try {
             System.out.println("====================================================================================\n");
@@ -156,15 +245,15 @@ public class ApplicationEtudiant {
         }
     }
 
-    private void poserSaCandidature() throws SQLException {
+    private void poserSaCandidature(){
 
     }
 
-    private void voirOffreDeStageAvecCandidaturePosee() throws SQLException {
+    private void voirOffreDeStageAvecCandidaturePosee(){
 
     }
 
-    private void annulerUneCandidature() throws SQLException {
+    private void annulerUneCandidature(){
 
     }
 }

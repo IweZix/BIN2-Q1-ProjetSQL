@@ -326,7 +326,7 @@ public class ApplicationEntreprise {
             }
             System.out.println("Candidatures affichées avec succès");
         } catch (SQLException e) {
-            System.out.println("Une erreur est survenue lors de l'affichage des candidatures pour une offre de stage"");
+            System.out.println("Une erreur est survenue lors de l'affichage des candidatures pour une offre de stage");
         }
     }
 

@@ -16,17 +16,11 @@ public class ApplicationEtudiant {
     private static final String CONFIG_FILE = "./config.properties";
 
     private Connection connection;
-
     private PreparedStatement connecterEtudiant;
-
     private PreparedStatement soumettreCandidature;
-
     private PreparedStatement annulerCandidatures;
-
     private PreparedStatement voirSesCandidaturess;
-
     private PreparedStatement voirOffreDeStageValidee;
-
     private PreparedStatement rechercheOffreDeStageParMotCle;
 
     private String idEtudiant;
@@ -261,8 +255,33 @@ public class ApplicationEtudiant {
 
     }
 
+    // o.code AS code, e.nom AS nom_entreprise, ec.etat AS etat_candidature,
+    //           e2.id_etudiant AS etudiant
     private void voirOffreDeStageAvecCandidaturePosee(){
+        System.out.println("================================ Voir les offres de stage candidatées =================================");
+        ResultSet rs = null;
 
+        try {
+            voirSesCandidaturess.setInt(1, Integer.parseInt(idEtudiant));
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+
+        try {
+            voirSesCandidaturess.execute();
+
+            rs = voirSesCandidaturess.getResultSet();
+            while(rs.next()) {
+                System.out.println("Offre : " + rs.getString("code"));
+                System.out.println("↳ Entreprise : " + rs.getString("nom_entreprise"));
+                System.out.println("↳ Etat : " + rs.getString("etat_candidature"));
+                System.out.println();
+            }
+            System.out.println("Candidatures récupérées avec succès");
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+        System.out.println("========================================================================================================\n");
     }
 
     private void annulerUneCandidature(){

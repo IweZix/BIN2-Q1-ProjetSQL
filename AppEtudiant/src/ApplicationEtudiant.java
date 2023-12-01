@@ -49,7 +49,7 @@ public class ApplicationEtudiant {
             // Prepare the SQL statement
             connecterEtudiant = connection.prepareStatement("SELECT projet2023.connecter_etudiant(?)");
             soumettreCandidature = connection.prepareStatement("SELECT projet2023.soumettre_candidature(?,?,?,?) ");
-            annulerCandidatures = connection.prepareStatement("SELECT projet2023.annuler_candidature(?,1)");
+            annulerCandidatures = connection.prepareStatement("SELECT projet2023.annuler_candidature(?,?)");
             voirSesCandidaturess = connection.prepareStatement("SELECT * FROM projet2023.voir_les_candidatures_d_un_etudiant WHERE etudiant = ? ");
             voirOffreDeStageValidee = connection.prepareStatement("SELECT * FROM projet2023.offre_stage_validee WHERE etudiant = ?");
             rechercheOffreDeStageParMotCle = connection.prepareStatement("SELECT *  FROM projet2023.recherche_par_mot_clees WHERE etudiant = ? AND mot_cle = ?");
@@ -292,15 +292,12 @@ public class ApplicationEtudiant {
 
         try {
             annulerCandidatures.setString(1,codeOffreStage);
-
+            annulerCandidatures.setInt(2, Integer.parseInt(idEtudiant));
 
 
             annulerCandidatures.execute();
             System.out.println("annulation executer avec succès");
         } catch (SQLException e) {
-            System.out.println(idEtudiant);
-            System.out.println(codeOffreStage);
-            System.out.println(e.getMessage());
             System.out.println("Erreur lors de l'annulation");
         }
 

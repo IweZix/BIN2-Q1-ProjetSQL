@@ -19,6 +19,12 @@ public class ApplicationEtudiant {
 
     private PreparedStatement connecterEtudiant;
 
+    private PreparedStatement soumettreCandidature;
+
+    private PreparedStatement annulerCandidatures;
+
+    private PreparedStatement voirSesCandidaturess;
+
     private PreparedStatement voirOffreDeStageValidee;
 
     private PreparedStatement rechercheOffreDeStageParMotCle;
@@ -48,8 +54,12 @@ public class ApplicationEtudiant {
 
             // Prepare the SQL statement
             connecterEtudiant = connection.prepareStatement("SELECT projet2023.connecter_etudiant(?)");
-            voirOffreDeStageValidee = connection.prepareStatement("SELECT code, nom, adresse, description FROM projet2023.offre_stage_validee WHERE etudiant = ?");
-            rechercheOffreDeStageParMotCle = connection.prepareStatement("SELECT code, nom, adresse, description, mots_cles FROM projet2023.recherche_offre_de_stage_par_mots_cle(?,?) WHERE etudiant = $1 AND mots_cles = $2");
+            soumettreCandidature = connection.prepareStatement("SELECT projet2023.soumettre_candidature(?,?,?,?) ");
+            annulerCandidatures = connection.prepareStatement("SELECT projet2023.annuler_candidature(?,?)");
+            voirSesCandidaturess = connection.prepareStatement("SELECT * FROM projet2023.voir_les_candidatures_d_un_etudiant WHERE etudiant = ? ");
+            voirOffreDeStageValidee = connection.prepareStatement("SELECT * FROM projet2023.offre_stage_validee WHERE etudiant = ?");
+            rechercheOffreDeStageParMotCle = connection.prepareStatement("SELECT *  FROM projet2023.recherche_par_mot_clees WHERE etudiant = ? AND mot_cle = ?");
+
 
         } catch (SQLException e) {
             System.out.println("Erreur de la connexion à la base de données : " + e.getMessage());
@@ -107,6 +117,7 @@ public class ApplicationEtudiant {
         try {
             connecterEtudiant.setString(1,email);
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
         try (ResultSet resultSet = connecterEtudiant.executeQuery()) {
@@ -124,6 +135,7 @@ public class ApplicationEtudiant {
                 seConnecter();
             }
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
     }

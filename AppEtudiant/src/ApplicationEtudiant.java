@@ -47,12 +47,18 @@ public class ApplicationEtudiant {
             connection = DriverManager.getConnection(url, user, password);
 
             // Prepare the SQL statement
-            connecterEtudiant = connection.prepareStatement("SELECT projet2023.connecter_etudiant(?)");
-            soumettreCandidature = connection.prepareStatement("SELECT projet2023.soumettre_candidature(?,?,?,?) ");
-            annulerCandidatures = connection.prepareStatement("SELECT projet2023.annuler_candidature(?,?)");
-            voirSesCandidaturess = connection.prepareStatement("SELECT * FROM projet2023.voir_les_candidatures_d_un_etudiant WHERE etudiant = ? ");
-            voirOffreDeStageValidee = connection.prepareStatement("SELECT * FROM projet2023.offre_stage_validee WHERE etudiant = ?");
-            rechercheOffreDeStageParMotCle = connection.prepareStatement("SELECT *  FROM projet2023.recherche_par_mot_clees WHERE etudiant = ? AND mot_cle = ?");
+            connecterEtudiant =
+                    connection.prepareStatement("SELECT projet2023.connecter_etudiant(?)");
+            soumettreCandidature =
+                    connection.prepareStatement("SELECT projet2023.soumettre_candidature(?,?,?) ");
+            annulerCandidatures =
+                    connection.prepareStatement("SELECT projet2023.annuler_candidature(?,?)");
+            voirSesCandidaturess =
+                    connection.prepareStatement("SELECT * FROM projet2023.voir_les_candidatures_d_un_etudiant WHERE etudiant = ? ");
+            voirOffreDeStageValidee =
+                    connection.prepareStatement("SELECT * FROM projet2023.offre_stage_validee WHERE etudiant = ?");
+            rechercheOffreDeStageParMotCle =
+                    connection.prepareStatement("SELECT *  FROM projet2023.recherche_par_mot_clees WHERE etudiant = ? AND mot_cle = ?");
 
 
         } catch (SQLException e) {
@@ -101,7 +107,7 @@ public class ApplicationEtudiant {
         }
     }
 
-    public void seConnecter() {
+    public void seConnecter(){
         System.out.println("================================ Connexion Etudiant =================================");
         System.out.print("Entrez votre email: ");
         String email = scanner.next();
@@ -109,15 +115,15 @@ public class ApplicationEtudiant {
         String password = scanner.next();
 
         try {
-            connecterEtudiant.setString(1, email);
+            connecterEtudiant.setString(1,email);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
         try (ResultSet resultSet = connecterEtudiant.executeQuery()) {
             if (resultSet.next()) {
-                if (BCrypt.checkpw(password, resultSet.getString("connecter_etudiant").split(",")[1].replace(")", ""))) {
-                    idEtudiant = resultSet.getString("connecter_etudiant").split(",")[0].replace("(", "");
+                if (BCrypt.checkpw(password, resultSet.getString("connecter_etudiant").split(",")[1].replace(")",""))) {
+                    idEtudiant = resultSet.getString("connecter_etudiant").split(",")[0].replace("(","");
                     System.out.println("Connecter avec succès sous l'identifiant : " + idEtudiant + "\n");
                     menuEtudiant();
                 } else {
@@ -133,8 +139,7 @@ public class ApplicationEtudiant {
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
     }
-
-    public void menuEtudiant() {
+    public void menuEtudiant(){
         int choix;
         while (true) {
             System.out.println("============================ Application Etudiant ============================");
@@ -167,11 +172,11 @@ public class ApplicationEtudiant {
                     voirOffreDeStageValidee();
                     break;
                 }
-                case 2: {
+                case 2:{
                     rechercheOffreDeStageParMotCle();
                     break;
                 }
-                case 3: {
+                case 3:{
                     poserSaCandidature();
                     break;
                 }
@@ -220,35 +225,72 @@ public class ApplicationEtudiant {
     }
 
     private void voirOffreDeStageValidee() {
+        System.out.println("============================== Voir les offres de stages validées =============================\n");
+        ResultSet rs = null;
 
         try {
-            System.out.println("====================================================================================\n");
-            System.out.println("voici les offres de stages");
-            voirOffreDeStageValidee.execute();
-
+            voirOffreDeStageValidee.setInt(1, Integer.parseInt(idEtudiant));
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            // System.out.println(e.getMessage());
+        }
+
+        try {
+            voirOffreDeStageValidee.execute();
+
+            rs = voirOffreDeStageValidee.getResultSet();
+            while(rs.next()) {
+                System.out.println("Offre : " + rs.getString("code"));
+                System.out.println("↳ " + rs.getString("nom"));
+                System.out.println("↳ " + rs.getString("description"));
+                System.out.println("↳ " + rs.getString("semestre"));
+                System.out.println("↳ " + rs.getString("mot_cle"));
+                System.out.println();
+            }
+            System.out.println("Offres de stage affichées avec succès");
+        } catch (SQLException e) {
+            System.out.println("ERROR: Une erreur est survenue");
+            System.out.println(e.getMessage());
         }
 
         System.out.println("====================================================================================\n");
     }
 
     private void rechercheOffreDeStageParMotCle() {
+        System.out.println("================================ Recherche par mots cles ===========================\n");
+        System.out.println("Entrez un mot-cle : ");
+        String motCle = scanner.nextLine().toLowerCase();
+
+        ResultSet rs = null;
 
         try {
-            System.out.println("====================================================================================\n");
-            System.out.println("Entrez un mot-cle : ");
-            String motscle = scanner.nextLine();
-            rechercheOffreDeStageParMotCle.setString(1, idEtudiant);
-            rechercheOffreDeStageParMotCle.setString(2, motscle);
-            System.out.println("voici les offres de stages par mots-cles");
+            rechercheOffreDeStageParMotCle.setInt(1, Integer.parseInt(idEtudiant));
+            rechercheOffreDeStageParMotCle.setString(2, motCle);
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue");
+        }
+
+        try {
             rechercheOffreDeStageParMotCle.execute();
 
+            rs = rechercheOffreDeStageParMotCle.getResultSet();
+
+            if (!rs.isBeforeFirst()) {
+                System.out.println("Aucune candidature trouvée pour le mot clé : " + motCle + "\n");
+                return;
+            }
+
+            while(rs.next()) {
+                System.out.println("Offre : " + rs.getString("code"));
+                System.out.println("↳ " + rs.getString("nom"));
+                System.out.println("↳ " + rs.getString("description"));
+                System.out.println("↳ " + rs.getString("semestre"));
+                System.out.println("↳ " + rs.getString("mot_cle"));
+                System.out.println();
+            }
+            System.out.println("Offres de stage affichées avec succès");
 
         } catch (SQLException e) {
             System.out.println("ERROR : une erreur est survenue");
-            // System.out.println(e.getMessage());
         }
     }
 
@@ -263,15 +305,75 @@ public class ApplicationEtudiant {
 
         try {
             soumettreCandidature.setString(1, motivation);
-            soumettreCandidature.setString(2, idEtudiant);
+            soumettreCandidature.setInt(2, Integer.parseInt(idEtudiant));
             soumettreCandidature.setString(3, codeOffreStage);
 
             soumettreCandidature.execute();
             System.out.println("Offre de stage encodée avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR : une erreur est survenue");
-            // System.out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
         System.out.println("==============================================================================================\n");
+    }
+
+
+
+
+    private void voirOffreDeStageAvecCandidaturePosee(){
+        System.out.println("================================ Voir les offres de stage candidatées =================================");
+        ResultSet rs = null;
+
+        try {
+            voirSesCandidaturess.setInt(1, Integer.parseInt(idEtudiant));
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+
+        try {
+            voirSesCandidaturess.execute();
+
+            rs = voirSesCandidaturess.getResultSet();
+
+            if (!rs.isBeforeFirst()) {
+                System.out.println("Vous n'avez posé aucune candidature\n");
+                return;
+            }
+
+            while(rs.next()) {
+                System.out.println("Offre : " + rs.getString("code"));
+                System.out.println("↳ Entreprise : " + rs.getString("nom_entreprise"));
+                System.out.println("↳ Etat : " + rs.getString("etat_candidature"));
+                System.out.println();
+            }
+            System.out.println("Candidatures récupérées avec succès");
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+        System.out.println("========================================================================================================\n");
+    }
+
+    private void annulerUneCandidature(){
+        System.out.println("================================ Annuler une candidature =================================");
+        System.out.println("Entrez le code de l'offre de stage : ");
+        String codeOffre = scanner.nextLine();
+
+        ResultSet rs = null;
+
+        try {
+            annulerCandidatures.setString(1, codeOffre);
+            annulerCandidatures.setInt(2, Integer.parseInt(idEtudiant));
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+
+        try {
+            annulerCandidatures.execute();
+
+            System.out.println("Candidature annulée avec succès");
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+        }
+        System.out.println("========================================================================================================\n");
     }
 }

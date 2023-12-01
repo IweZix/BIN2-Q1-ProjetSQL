@@ -159,7 +159,6 @@ public class ApplicationProfesseur {
             System.out.println("Etudiant encodé avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            // System.out.println(e.getMessage());
         }
 
         System.out.println("====================================================================================\n");
@@ -192,7 +191,6 @@ public class ApplicationProfesseur {
             System.out.println("Entreprise encodée avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            System.out.println(e.getMessage());
         }
         System.out.println("====================================================================================\n");
 
@@ -210,7 +208,6 @@ public class ApplicationProfesseur {
             System.out.println("Mot clé encodé avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            // System.out.println(e.getMessage());
         }
 
         System.out.println("====================================================================================\n");

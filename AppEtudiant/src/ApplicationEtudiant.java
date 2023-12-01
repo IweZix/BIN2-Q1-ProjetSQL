@@ -285,6 +285,23 @@ public class ApplicationEtudiant {
     }
 
     private void annulerUneCandidature(){
+        System.out.println("================================ Annuler une Candidature =================================");
+        System.out.print("Entrez le code de l'offre : ");
+        String codeOffreStage = scanner.nextLine();
+
+
+        try {
+            annulerCandidatures.setString(1,codeOffreStage);
+            annulerCandidatures.setInt(2, Integer.parseInt(idEtudiant));
+
+
+            annulerCandidatures.execute();
+            System.out.println("annulation executer avec succès");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'annulation");
+        }
+
+        System.out.println("============================================================================================================\n");
+    }
 
     }
-}

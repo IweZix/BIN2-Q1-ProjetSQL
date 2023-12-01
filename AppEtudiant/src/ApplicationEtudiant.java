@@ -107,7 +107,7 @@ public class ApplicationEtudiant {
         }
     }
 
-    public void seConnecter(){
+    public void seConnecter() {
         System.out.println("================================ Connexion Etudiant =================================");
         System.out.print("Entrez votre email: ");
         String email = scanner.next();
@@ -115,15 +115,15 @@ public class ApplicationEtudiant {
         String password = scanner.next();
 
         try {
-            connecterEtudiant.setString(1,email);
+            connecterEtudiant.setString(1, email);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
         try (ResultSet resultSet = connecterEtudiant.executeQuery()) {
             if (resultSet.next()) {
-                if (BCrypt.checkpw(password, resultSet.getString("connecter_etudiant").split(",")[1].replace(")",""))) {
-                    idEtudiant = resultSet.getString("connecter_etudiant").split(",")[0].replace("(","");
+                if (BCrypt.checkpw(password, resultSet.getString("connecter_etudiant").split(",")[1].replace(")", ""))) {
+                    idEtudiant = resultSet.getString("connecter_etudiant").split(",")[0].replace("(", "");
                     System.out.println("Connecter avec succès sous l'identifiant : " + idEtudiant + "\n");
                     menuEtudiant();
                 } else {
@@ -139,7 +139,8 @@ public class ApplicationEtudiant {
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
     }
-    public void menuEtudiant(){
+
+    public void menuEtudiant() {
         int choix;
         while (true) {
             System.out.println("============================ Application Etudiant ============================");
@@ -172,11 +173,11 @@ public class ApplicationEtudiant {
                     voirOffreDeStageValidee();
                     break;
                 }
-                case 2:{
+                case 2: {
                     rechercheOffreDeStageParMotCle();
                     break;
                 }
-                case 3:{
+                case 3: {
                     poserSaCandidature();
                     break;
                 }
@@ -224,7 +225,7 @@ public class ApplicationEtudiant {
         }
     }
 
-    private void voirOffreDeStageValidee(){
+    private void voirOffreDeStageValidee() {
 
         try {
             System.out.println("====================================================================================\n");
@@ -239,7 +240,7 @@ public class ApplicationEtudiant {
         System.out.println("====================================================================================\n");
     }
 
-    private void rechercheOffreDeStageParMotCle(){
+    private void rechercheOffreDeStageParMotCle() {
 
         try {
             System.out.println("====================================================================================\n");
@@ -257,15 +258,34 @@ public class ApplicationEtudiant {
         }
     }
 
-    private void poserSaCandidature(){
+    private void poserSaCandidature() {
+
+        System.out.println("================================ soumettre une candidature =================================");
+        System.out.println("Entrez votre motivation : ");
+        String motivation = scanner.nextLine();
+        System.out.print("le code de l'offre de stage");
+        String codeOffreStage = scanner.nextLine();
+
+
+        try {
+            soumettreCandidature.setString(1, motivation);
+            soumettreCandidature.setString(2, idEtudiant);
+            soumettreCandidature.setString(3, codeOffreStage);
+
+            soumettreCandidature.execute();
+            System.out.println("Offre de stage encodée avec succès");
+        } catch (SQLException e) {
+            System.out.println("ERROR : une erreur est survenue");
+            // System.out.println(e.getMessage());
+        }
+        System.out.println("==============================================================================================\n");
+    }
+
+    private void voirOffreDeStageAvecCandidaturePosee() {
 
     }
 
-    private void voirOffreDeStageAvecCandidaturePosee(){
-
-    }
-
-    private void annulerUneCandidature(){
+    private void annulerUneCandidature() {
 
     }
 }

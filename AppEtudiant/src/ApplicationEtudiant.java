@@ -16,17 +16,11 @@ public class ApplicationEtudiant {
     private static final String CONFIG_FILE = "./config.properties";
 
     private Connection connection;
-
     private PreparedStatement connecterEtudiant;
-
     private PreparedStatement soumettreCandidature;
-
     private PreparedStatement annulerCandidatures;
-
     private PreparedStatement voirSesCandidaturess;
-
     private PreparedStatement voirOffreDeStageValidee;
-
     private PreparedStatement rechercheOffreDeStageParMotCle;
 
     private String idEtudiant;
@@ -279,13 +273,5 @@ public class ApplicationEtudiant {
             // System.out.println(e.getMessage());
         }
         System.out.println("==============================================================================================\n");
-    }
-
-    private void voirOffreDeStageAvecCandidaturePosee() {
-
-    }
-
-    private void annulerUneCandidature() {
-
     }
 }

@@ -23,6 +23,7 @@ public class ApplicationEntreprise {
     private PreparedStatement voirSesOffres;
     private PreparedStatement voirCandidaturePourOffre;
     private PreparedStatement accepterEtudiant;
+    private PreparedStatement annulerOffreDeStage;
 
     private String idEntreprise;
 
@@ -50,7 +51,8 @@ public class ApplicationEntreprise {
             ajouterMotCle = connection.prepareStatement("SELECT projet2023.ajouter_mot_cle_a_offre(?, ?, ?)");
             voirSesOffres = connection.prepareStatement("SELECT * FROM projet2023.voir_ses_offres_de_stage WHERE entreprise = ?");
             voirCandidaturePourOffre = connection.prepareStatement("SELECT * FROM projet2023.voir_candidature_pour_offre_de_stage WHERE code = ? AND entreprise = ?");
-            accepterEtudiant = connection.prepareStatement("SELECT projet2023.accepter_etudiant(?, ?, ?)");
+            accepterEtudiant = connection.prepareStatement("SELECT projet2023.selectionner_etudiant_pour_offre_de_stage(?, ?, ?)");
+            annulerOffreDeStage = connection.prepareStatement("SELECT projet2023.annuler_offre_de_stage(?, ?)");
 
         } catch (java.sql.SQLException e) {
             System.err.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
@@ -139,7 +141,8 @@ public class ApplicationEntreprise {
             System.out.println("4. Voir ses offres de stage");
             System.out.println("5. Voir les candidatures pour une offre de stage");
             System.out.println("6. Accepter un étudiant");
-            System.out.println("7. Fermer l'application");
+            System.out.println("7. Annuler une offre de stage");
+            System.out.println("8. Fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
 
@@ -153,7 +156,7 @@ public class ApplicationEntreprise {
 
             if (choix == 0) break;
 
-            if (choix < 0 || choix > 7) {
+            if (choix < 0 || choix > 8) {
                 System.out.println("Erreur: Veuillez entrer un nombre entre 1 et 7");
                 continue;
             }
@@ -165,7 +168,8 @@ public class ApplicationEntreprise {
                 case 4 -> voirSesOffres();
                 case 5 -> voirCandidaturePourOffre();
                 case 6 -> accepterEtudiant();
-                case 7 -> {
+                case 7 -> annulerOffreDeStage();
+                case 8 -> {
                     System.out.println("Fermeture de l'application");
                     this.close();
                     System.exit(0);
@@ -355,6 +359,30 @@ public class ApplicationEntreprise {
         }
 
         System.out.println("======================================================================================\n");
+    }
+
+    private void annulerOffreDeStage() {
+        System.out.println("================================ Annuler une offre de stage =================================");
+        System.out.print("Entrez le code de l'offre de stage: ");
+        String codeOffre = scanner.nextLine();
+
+        ResultSet rs = null;
+
+        try {
+            annulerOffreDeStage.setString(1, idEntreprise);
+            annulerOffreDeStage.setString(2, codeOffre);
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'annulation de l'offre de stage");
+        }
+
+        try {
+            annulerOffreDeStage.execute();
+            System.out.println("Offre de stage annulée avec succès");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'annulation de l'offre de stage");
+        }
+
+        System.out.println("============================================================================================\n");
     }
 
 }

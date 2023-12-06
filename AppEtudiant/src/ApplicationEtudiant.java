@@ -299,7 +299,7 @@ public class ApplicationEtudiant {
         System.out.println("================================ soumettre une candidature =================================");
         System.out.println("Entrez votre motivation : ");
         String motivation = scanner.nextLine();
-        System.out.print("le code de l'offre de stage");
+        System.out.print("le code de l'offre de stage : ");
         String codeOffreStage = scanner.nextLine();
 
 
@@ -312,7 +312,7 @@ public class ApplicationEtudiant {
             System.out.println("Offre de stage encodée avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR : une erreur est survenue");
-            System.out.println(e.getMessage());
+
         }
         System.out.println("==============================================================================================\n");
     }

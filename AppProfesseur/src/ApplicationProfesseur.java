@@ -10,7 +10,7 @@ public class ApplicationProfesseur {
     private final Scanner scanner = new Scanner(System.in);
 
     // Load the configuration file for the database
-    private static final String CONFIG_FILE = "./config.properties";
+    private static final String CONFIG_FILE = "config.properties";
 
     private Connection connection;
 
@@ -48,7 +48,7 @@ public class ApplicationProfesseur {
             encoderEntreprise = connection.prepareStatement("SELECT projet2023.encoder_entreprise(?, ?, ?, ?, ?)");
             encoderMotCle = connection.prepareStatement("SELECT projet2023.encoder_un_mot_cle(?)");
             voirOffreDeStageNonValidee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_non_validee");
-            validerOffreDeStageNonValidee = connection.prepareStatement("SELECT FROM projet2023.valider_offre_de_stage(?)");
+            validerOffreDeStageNonValidee = connection.prepareStatement("SELECT projet2023.valider_offre_de_stage(?)");
             voirOffreDeStageValidee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_validee");
             voirEtudiantSansStageAccepte = connection.prepareStatement("SELECT * FROM projet2023.voir_etudiant_sans_stage_accepte");
             voirOffreDeStageAttribuee = connection.prepareStatement("SELECT * FROM projet2023.voir_offres_de_stage_aatribuee");
@@ -252,9 +252,7 @@ public class ApplicationProfesseur {
             validerOffreDeStageNonValidee.execute();
             System.out.println("Offre de stage validée avec succès");
         } catch (SQLException e) {
-            String message = e.getMessage();
-            int newLineIndex = message.indexOf("\n");
-            System.out.println(message.substring(0, newLineIndex));
+            System.out.println("Une erreur c'est produite");
         }
 
         System.out.println("=======================================================================================================\n");

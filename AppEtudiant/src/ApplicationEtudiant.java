@@ -256,7 +256,6 @@ public class ApplicationEtudiant {
             System.out.println("Offres de stage affichées avec succès");
         } catch (SQLException e) {
             System.out.println("ERROR: Une erreur est survenue");
-            System.out.println(e.getMessage());
         }
 
         System.out.println("====================================================================================\n");
@@ -318,7 +317,9 @@ public class ApplicationEtudiant {
             soumettreCandidature.execute();
             System.out.println("Offre de stage encodée avec succès");
         } catch (SQLException e) {
-            System.out.println("ERROR : une erreur est survenue");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
 
         }
         System.out.println("==============================================================================================\n");
@@ -379,7 +380,9 @@ public class ApplicationEtudiant {
 
             System.out.println("Candidature annulée avec succès");
         } catch (SQLException e) {
-            System.out.println("ERROR : une erreur est survenue lors de la recuperation des candidatures");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
         }
         System.out.println("========================================================================================================\n");
     }

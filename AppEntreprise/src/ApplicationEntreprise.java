@@ -222,7 +222,9 @@ public class ApplicationEntreprise {
             encoderOffreDeStage.execute();
             System.out.println("Offre de stage encodée avec succès");
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'encodage de l'offre de stage");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
         }
 
         System.out.println("==============================================================================================\n");
@@ -262,7 +264,9 @@ public class ApplicationEntreprise {
             ajouterMotCle.execute();
             System.out.println("Mot clé ajouté avec succès");
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'ajout du mot clé");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
         }
 
         System.out.println("============================================================================================================\n");
@@ -359,7 +363,9 @@ public class ApplicationEntreprise {
             accepterEtudiant.execute();
             System.out.println("Étudiant accepté avec succès");
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'acceptation de l'étudiant");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
         }
 
         System.out.println("======================================================================================\n");
@@ -383,7 +389,9 @@ public class ApplicationEntreprise {
             annulerOffreDeStage.execute();
             System.out.println("Offre de stage annulée avec succès");
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'annulation de l'offre de stage");
+            String errorMessage = e.getMessage();
+            String[] lines = errorMessage.split("\n");
+            System.out.println(lines[0]);
         }
 
         System.out.println("============================================================================================\n");

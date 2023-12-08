@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -147,12 +148,10 @@ public class ApplicationEntreprise {
             System.out.print("Entrez votre choix: ");
 
             try {
-                choix = Integer.parseInt(scanner.nextLine());
+                choix = scanner.nextInt();
+                scanner.nextLine(); // Pour consommer la nouvelle ligne restante
                 System.out.println();
-            } catch (NumberFormatException e) {
-                System.out.println("Erreur: Veuillez entrer un nombre");
-                continue;
-            }
+
 
             if (choix == 0) break;
 
@@ -176,6 +175,11 @@ public class ApplicationEntreprise {
                 }
                 default -> {}
             }
+        } catch (InputMismatchException e) {
+            System.out.println("Erreur: Veuillez entrer un nombre");
+            scanner.nextLine(); // Pour consommer la mauvaise entrée
+
+        }
         }
     }
 

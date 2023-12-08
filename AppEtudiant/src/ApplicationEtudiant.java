@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.InputMismatchException;
 import java.util.Properties;
 import java.util.Scanner;
 import java.sql.*;
@@ -103,7 +104,9 @@ public class ApplicationEtudiant {
                     System.exit(0);
                     break;
                 }
+
             }
+
         }
     }
 
@@ -139,64 +142,68 @@ public class ApplicationEtudiant {
             System.out.println("Erreur lors de la connexion de l'etudiant");
         }
     }
-    public void menuEtudiant(){
-        int choix;
+
+    public void menuEtudiant() {
+        int choix = 0;
         while (true) {
             System.out.println("============================ Application Etudiant ============================");
-            System.out.println("1. Voir les offres de stage validee");
+            System.out.println("1. Voir les offres de stage validée");
             System.out.println("2. Rechercher une offre de stage par mots cles");
             System.out.println("3. Poser sa candidature");
-            System.out.println("4. Voir les offres de stage pour lequel une candidature a ete posee");
+            System.out.println("4. Voir les offres de stage pour lesquelles une candidature a été posée");
             System.out.println("5. Annuler une candidature");
-            System.out.println("6. fermer l'application");
+            System.out.println("6. Fermer l'application");
             System.out.println("==============================================================================");
             System.out.print("Entrez votre choix: ");
 
             try {
-                choix = Integer.parseInt(scanner.nextLine());
+                choix = scanner.nextInt();
+                scanner.nextLine(); // Pour consommer la nouvelle ligne restante
                 System.out.println();
-            } catch (NumberFormatException e) {
+
+                if (choix == 0) break;
+
+                if (choix < 0 || choix > 6) {
+                    System.out.println("Erreur: Veuillez entrer un nombre entre 1 et 6");
+                    continue;
+                }
+
+                switch (choix) {
+                    case 1: {
+                        voirOffreDeStageValidee();
+                        break;
+                    }
+                    case 2: {
+                        rechercheOffreDeStageParMotCle();
+                        break;
+                    }
+                    case 3: {
+                        poserSaCandidature();
+                        break;
+                    }
+                    case 4: {
+                        voirOffreDeStageAvecCandidaturePosee();
+                        break;
+                    }
+                    case 5: {
+                        annulerUneCandidature();
+                        break;
+                    }
+                    case 6: {
+                        System.out.println("Fermeture de l'application");
+                        this.close();
+                        System.exit(0);
+                        break;
+                    }
+                }
+
+            } catch (InputMismatchException e) {
                 System.out.println("Erreur: Veuillez entrer un nombre");
-                continue;
-            }
-
-            if (choix == 0) break;
-
-            if (choix < 0 || choix > 6) {
-                System.out.println("Erreur: Veuillez entrer un nombre entre 1 et 5");
-                continue;
-            }
-
-            switch (choix) {
-                case 1: {
-                    voirOffreDeStageValidee();
-                    break;
-                }
-                case 2:{
-                    rechercheOffreDeStageParMotCle();
-                    break;
-                }
-                case 3:{
-                    poserSaCandidature();
-                    break;
-                }
-                case 4: {
-                    voirOffreDeStageAvecCandidaturePosee();
-                    break;
-                }
-                case 5: {
-                    annulerUneCandidature();
-                    break;
-                }
-                case 6: {
-                    System.out.println("Fermeture de l'application");
-                    this.close();
-                    System.exit(0);
-                }
+                scanner.nextLine(); // Pour consommer la mauvaise entrée
 
             }
+
         }
-
     }
 
     /**

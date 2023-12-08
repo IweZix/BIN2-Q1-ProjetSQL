@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.io.InputStream;
 import java.util.Properties;
@@ -76,12 +77,10 @@ public class ApplicationProfesseur {
             System.out.print("Entrez votre choix: ");
 
             try {
-                choix = Integer.parseInt(scanner.nextLine());
+                choix = scanner.nextInt();
+                scanner.nextLine(); // Pour consommer la nouvelle ligne restante
                 System.out.println();
-            } catch (NumberFormatException e) {
-                System.out.println("Erreur: Veuillez entrer un nombre");
-                continue;
-            }
+
 
             if (choix == 0) break;
 
@@ -106,6 +105,11 @@ public class ApplicationProfesseur {
                 }
                 default -> {}
             }
+        } catch (InputMismatchException e) {
+            System.out.println("Erreur: Veuillez entrer un nombre");
+            scanner.nextLine(); // Pour consommer la mauvaise entrée
+
+        }
         }
     }
 

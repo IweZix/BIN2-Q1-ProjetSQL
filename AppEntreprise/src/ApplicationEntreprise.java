@@ -315,7 +315,7 @@ public class ApplicationEntreprise {
             voirCandidaturePourOffre.setString(1, codeOffre);
             voirCandidaturePourOffre.setString(2, idEntreprise);
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'affichage des candidatures pour une offre de stage");
+            System.out.println("Il n'y a pas de candidatures pour cette offre ou vous n'avez pas d'offre ayant ce code");
         }
 
         try {
